@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Playground Organizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box input,
+        .search-box select {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus,
+        .search-box select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .playground-list {
+            padding: 30px;
+        }
+
+        .playground-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .playground-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .playground-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .playground-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .playground-path {
+            font-size: 0.9em;
+            color: #718096;
+            font-family: 'Courier New', monospace;
+        }
+
+        .playground-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .playground-actions button {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            font-family: 'Courier New', monospace;
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 100px);
+            border: none;
+            border-radius: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .badge-section {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-subsection {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 150px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #718096;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 HTML Playground Organizer</h1>
+            <p>Organize and manage your educational HTML playgrounds</p>
+        </div>
+
+        <div class="controls">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">Total Playgrounds</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="sectionCount">0</div>
+                    <div class="stat-label">Sections</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="subsectionCount">0</div>
+                    <div class="stat-label">Subsections</div>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchTitle" placeholder="🔍 Search by title...">
+                <select id="searchSection">
+                    <option value="">All Sections</option>
+                </select>
+                <select id="searchSubsection">
+                    <option value="">All Subsections</option>
+                </select>
+                <button class="btn btn-primary" onclick="addPlayground()">➕ Add New Playground</button>
+            </div>
+        </div>
+
+        <div class="playground-list" id="playgroundList">
+            <div class="empty-state">
+                <h3>No playgrounds yet</h3>
+                <p>Click "Add New Playground" to get started!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="playgroundModal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">Add New Playground</div>
+            <form id="playgroundForm">
+                <div class="form-group">
+                    <label>Section *</label>
+                    <input type="text" id="formSection" required placeholder="e.g., Deep Learning" list="sectionList">
+                    <datalist id="sectionList"></datalist>
+                </div>
+                <div class="form-group">
+                    <label>Subsection *</label>
+                    <input type="text" id="formSubsection" required placeholder="e.g., Neural Networks" list="subsectionList">
+                    <datalist id="subsectionList"></datalist>
+                </div>
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" id="formTitle" required placeholder="e.g., CNN Visualization">
+                </div>
+                <div class="form-group">
+                    <label>HTML Content *</label>
+                    <textarea id="formContent" required placeholder="Paste your HTML code here..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Playground</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Modal -->
+    <div class="modal" id="viewModal">
+        <div class="modal-content" style="max-width: 95%; width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="modal-header" style="margin: 0;" id="viewTitle"></div>
+                <button class="btn btn-secondary" onclick="closeViewModal()">Close</button>
+            </div>
+            <iframe id="playgroundFrame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        let playgrounds = [];
+        let editingId = null;
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('htmlPlaygrounds');
+            if (saved) {
+                playgrounds = JSON.parse(saved);
+            }
+            renderPlaygrounds();
+            updateStats();
+            updateFilterOptions();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('htmlPlaygrounds', JSON.stringify(playgrounds));
+            updateStats();
+            updateFilterOptions();
+        }
+
+        // Add or update playground
+        document.getElementById('playgroundForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const playground = {
+                id: editingId || Date.now(),
+                section: document.getElementById('formSection').value.trim(),
+                subsection: document.getElementById('formSubsection').value.trim(),
+                title: document.getElementById('formTitle').value.trim(),
+                content: document.getElementById('formContent').value,
+                createdAt: editingId ? playgrounds.find(p => p.id === editingId).createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            if (editingId) {
+                const index = playgrounds.findIndex(p => p.id === editingId);
+                playgrounds[index] = playground;
+            } else {
+                playgrounds.push(playground);
+            }
+
+            saveData();
+            renderPlaygrounds();
+            closeModal();
+        });
+
+        // Render playgrounds
+        function renderPlaygrounds() {
+            const searchTitle = document.getElementById('searchTitle').value.toLowerCase();
+            const searchSection = document.getElementById('searchSection').value;
+            const searchSubsection = document.getElementById('searchSubsection').value;
+
+            let filtered = playgrounds.filter(p => {
+                const matchTitle = !searchTitle || p.title.toLowerCase().includes(searchTitle);
+                const matchSection = !searchSection || p.section === searchSection;
+                const matchSubsection = !searchSubsection || p.subsection === searchSubsection;
+                return matchTitle && matchSection && matchSubsection;
+            });
+
+            // Sort by section, subsection, then title
+            filtered.sort((a, b) => {
+                if (a.section !== b.section) return a.section.localeCompare(b.section);
+                if (a.subsection !== b.subsection) return a.subsection.localeCompare(b.subsection);
+                return a.title.localeCompare(b.title);
+            });
+
+            const listEl = document.getElementById('playgroundList');
+            
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No playgrounds found</h3>
+                        <p>Try adjusting your search criteria</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(p => `
+                <div class="playground-item" onclick="viewPlayground(${p.id})">
+                    <div class="playground-header">
+                        <div>
+                            <div class="playground-title">${escapeHtml(p.title)}</div>
+                            <div class="playground-path">
+                                <span class="badge badge-section">${escapeHtml(p.section)}</span>
+                                <span class="badge badge-subsection">${escapeHtml(p.subsection)}</span>
+                            </div>
+                        </div>
+                        <div class="playground-actions" onclick="event.stopPropagation()">
+                            <button class="btn btn-primary" onclick="editPlayground(${p.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deletePlayground(${p.id})">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalCount').textContent = playgrounds.length;
+            
+            const sections = new Set(playgrounds.map(p => p.section));
+            document.getElementById('sectionCount').textContent = sections.size;
+            
+            const subsections = new Set(playgrounds.map(p => `${p.section}::${p.subsection}`));
+            document.getElementById('subsectionCount').textContent = subsections.size;
+        }
+
+        // Update filter options
+        function updateFilterOptions() {
+            const sections = [...new Set(playgrounds.map(p => p.section))].sort();
+            const subsections = [...new Set(playgrounds.map(p => p.subsection))].sort();
+
+            const sectionSelect = document.getElementById('searchSection');
+            const currentSection = sectionSelect.value;
+            sectionSelect.innerHTML = '<option value="">All Sections</option>' +
+                sections.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+            sectionSelect.value = currentSection;
+
+            const subsectionSelect = document.getElementById('searchSubsection');
+            const currentSubsection = subsectionSelect.value;
+            subsectionSelect.innerHTML = '<option value="">All Subsections</option>' +
+                subsections.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+            subsectionSelect.value = currentSubsection;
+
+            // Update datalists
+            document.getElementById('sectionList').innerHTML = 
+                sections.map(s => `<option value="${escapeHtml(s)}">`).join('');
+            document.getElementById('subsectionList').innerHTML = 
+                subsections.map(s => `<option value="${escapeHtml(s)}">`).join('');
+        }
+
+        // Add playground
+        function addPlayground() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Playground';
+            document.getElementById('playgroundForm').reset();
+            document.getElementById('playgroundModal').classList.add('active');
+        }
+
+        // Edit playground
+        function editPlayground(id) {
+            editingId = id;
+            const playground = playgrounds.find(p => p.id === id);
+            
+            document.getElementById('modalTitle').textContent = 'Edit Playground';
+            document.getElementById('formSection').value = playground.section;
+            document.getElementById('formSubsection').value = playground.subsection;
+            document.getElementById('formTitle').value = playground.title;
+            document.getElementById('formContent').value = playground.content;
+            
+            document.getElementById('playgroundModal').classList.add('active');
+        }
+
+        // Delete playground
+        function deletePlayground(id) {
+            if (confirm('Are you sure you want to delete this playground?')) {
+                playgrounds = playgrounds.filter(p => p.id !== id);
+                saveData();
+                renderPlaygrounds();
+            }
+        }
+
+        // View playground
+        function viewPlayground(id) {
+            const playground = playgrounds.find(p => p.id === id);
+            document.getElementById('viewTitle').textContent = playground.title;
+            
+            const iframe = document.getElementById('playgroundFrame');
+            iframe.srcdoc = playground.content;
+            
+            document.getElementById('viewModal').classList.add('active');
+        }
+
+        // Close modals
+        function closeModal() {
+            document.getElementById('playgroundModal').classList.remove('active');
+            editingId = null;
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewModal').classList.remove('active');
+            document.getElementById('playgroundFrame').srcdoc = '';
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Search functionality
+        document.getElementById('searchTitle').addEventListener('input', renderPlaygrounds);
+        document.getElementById('searchSection').addEventListener('change', renderPlaygrounds);
+        document.getElementById('searchSubsection').addEventListener('change', renderPlaygrounds);
+
+        // Close modal on outside click
+        document.getElementById('playgroundModal').addEventListener('click', (e) => {
+            if (e.target.id === 'playgroundModal') closeModal();
+        });
+        document.getElementById('viewModal').addEventListener('click', (e) => {
+            if (e.target.id === 'viewModal') closeViewModal();
+        });
+
+        // Initialize
+        loadData();
+
+        // Export data function (for backup)
+        function exportData() {
+            const dataStr = JSON.stringify(playgrounds, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'playgrounds-backup.json';
+            link.click();
+        }
+
+        // Import data function (for restore)
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        playgrounds = JSON.parse(e.target.result);
+                        saveData();
+                        renderPlaygrounds();
+                        alert('Data imported successfully!');
+                    } catch (error) {
+                        alert('Error importing data: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+    </script>
+</body>
+</html>
