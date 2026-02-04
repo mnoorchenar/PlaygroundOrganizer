@@ -585,15 +585,30 @@
       }
     }
 
+    // function viewPlayground(id) {
+    //   const playground = playgrounds.find(p => p.id === id);
+    //   document.getElementById("viewTitle").textContent = playground.title;
+
+    //   const iframe = document.getElementById("playgroundFrame");
+    //   iframe.srcdoc = playground.content;
+
+    //   document.getElementById("viewModal").classList.add("active");
+    // }
+
     function viewPlayground(id) {
-      const playground = playgrounds.find(p => p.id === id);
-      document.getElementById("viewTitle").textContent = playground.title;
+    const playground = playgrounds.find(p => p.id === id);
+    
+    // Create a blob from the HTML content
+    const blob = new Blob([playground.content], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    // Open in a new tab
+    window.open(url, '_blank');
+    
+    // Optional: Clean up the URL after a delay
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
-      const iframe = document.getElementById("playgroundFrame");
-      iframe.srcdoc = playground.content;
-
-      document.getElementById("viewModal").classList.add("active");
-    }
 
     function closeModal() {
       document.getElementById("playgroundModal").classList.remove("active");
