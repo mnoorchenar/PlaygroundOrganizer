@@ -440,6 +440,20 @@
       }
     }
 
+    async function loadBundledPlaygrounds() {
+      try {
+        const res = await fetch("playgrounds-backup.json", { cache: "no-cache" });
+        if (!res.ok) return;
+        const parsed = await res.json();
+        if (Array.isArray(parsed)) {
+          playgrounds = normalizePlaygrounds(parsed);
+          saveToLocalStorageOnly();
+        }
+      } catch {
+        // offline or opened from disk: keep the empty list
+      }
+    }
+
     async function chooseDataFile() {
       const fsApiOk = !!window.showOpenFilePicker && !!window.showSaveFilePicker;
       if (!fsApiOk) {
@@ -676,6 +690,10 @@
       const loadedFromFile = await readFromLinkedFile();
       if (!loadedFromFile) {
         loadFromLocalStorage();
+      }
+      // A new visitor's browser has nothing saved: start from the bundled playgrounds
+      if (playgrounds.length === 0) {
+        await loadBundledPlaygrounds();
       }
 
       renderPlaygrounds();
